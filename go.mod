@@ -1,3 +1,3 @@
-module github.com/jkellydev/repath.io
+module repath.io
 
-require github.com/neo4j/neo4j-go-driver v1.8.3
+require github.com/neo4j/neo4j-go-driver/v4 v4.2.2
