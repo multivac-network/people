@@ -14,7 +14,7 @@ func main() {
 		return
 	}
   for _, post := range posts {
-    regex := regexp.MustCompile(`\s([A-Z]{2,4})\s`)
+    regex := regexp.MustCompile(`\s([\$A-Z]{2,5})\s`)
     matched := regex.MatchString(post.Body)
     if matched && post.Score >= 100 {
       vals := regex.FindAllString(post.Body, -1)
