@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       # specify the version
-      - image: circleci/golang:1.9
+      - image: circleci/golang:1.11
         environment:
           GO111MODULE: "on"
       # Specify service dependencies here if necessary
@@ -24,5 +24,6 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: unset GOPATH
+      - run: go mod download
       - run: go mod verify
       - run: go test -v ./...
