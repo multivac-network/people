@@ -1,4 +1,4 @@
-module repath.io/person
+module repath.io/service
 
 require (
 	github.com/google/uuid v1.2.0
