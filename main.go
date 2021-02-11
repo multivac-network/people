@@ -1,8 +1,8 @@
 package main
 
 import "fmt"
-import "repath.io/person/config"
-import "repath.io/person/data"
+import "repath.io/service/config"
+import "repath.io/service/data"
 
 func main() {
 	configuration := config.LoadConfiguration()
