@@ -1,6 +1,5 @@
 package data
 
-import "fmt"
 import "github.com/google/uuid"
 import "github.com/neo4j/neo4j-go-driver/v4/neo4j"
 
