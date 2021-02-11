@@ -9,18 +9,18 @@ type GraphDataStore struct {
 	session neo4j.Session
 }
 
-func (ds *DataStore) initialize(uri, username, password string) {
+func (gds *GraphDataStore) initialize(uri, username, password string) {
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""))
 	if err != nil {
 		panic(err)
 	}
-	ds.driver = driver
+	gds.driver = driver
 	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	ds.session = session
+	gds.session = session
 }
 
-func (ds *DataStore) execute(command string, parameters map[string]interface{}) (interface{}, error) {
-	return ds.session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+func (gds *GraphDataStore) execute(command string, parameters map[string]interface{}) (interface{}, error) {
+	return gds.session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
     parameters["id"] = uuid.New().String()
 		tresult, err := transaction.Run(command, parameters)
 		if err != nil {
@@ -35,7 +35,7 @@ func (ds *DataStore) execute(command string, parameters map[string]interface{}) 
 
 }
 
-func (ds *DataStore) Close() {
-	ds.session.Close()
-	ds.driver.Close()
+func (gds *GraphDataStore) Close() {
+	gds.session.Close()
+	gds.driver.Close()
 }
