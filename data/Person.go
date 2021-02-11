@@ -1,6 +1,7 @@
 package data
 
 type Person struct {
-  FirstName string
-  LastName string
+  Id string
+	FirstName string
+	LastName  string
 }
