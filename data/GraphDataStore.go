@@ -1,7 +1,7 @@
 package data
 
 import "github.com/google/uuid"
-import "github.com/neo4j/neo4j-go-driver/v4/neo4j"
+import ""
 
 type GraphDataStore struct {
 	driver  neo4j.Driver
