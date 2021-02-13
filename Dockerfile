@@ -1,6 +1,8 @@
-FROM golang:1.15-alpine
+FROM golang:1.15 as builder
 
-COPY . workspace/
-RUN go install ./workspace/
+COPY . .
+RUN go build -o service
 
-ENTRYPOINT ["$GOBIN/service"]
+FROM scratch
+COPY --from=builder . .
+ENTRYPOINT ["service"]
