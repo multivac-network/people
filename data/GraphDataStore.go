@@ -1,7 +1,9 @@
 package data
 
-import "github.com/google/uuid"
-import ""
+import (
+	"github.com/google/uuid"
+	"github.com/neo4j/neo4j-go-driver/neo4j"
+)
 
 type GraphDataStore struct {
 	driver  neo4j.Driver
@@ -14,7 +16,8 @@ func (gds *GraphDataStore) initialize(uri, username, password string) {
 		panic(err)
 	}
 	gds.driver = driver
-	session := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	session, err := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil { panic(err) }
 	gds.session = session
 }
 
@@ -27,7 +30,7 @@ func (gds *GraphDataStore) execute(command string, parameters map[string]interfa
 		}
 
 		if tresult.Next() {
-			return tresult.Record().Values[0], nil
+			return tresult.Record().Values()[0], nil
 		}
 		return nil, tresult.Err()
 	})
