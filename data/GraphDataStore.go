@@ -17,16 +17,18 @@ func (gds *GraphDataStore) initialize(uri, username, password string) {
 	}
 	gds.driver = driver
 	session, err := driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil { panic(err) }
+	if err != nil {
+		panic(err)
+	}
 	gds.session = session
 }
 
 func (gds *GraphDataStore) execute(command string, parameters map[string]interface{}) (interface{}, error) {
 	return gds.session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-    parameters["id"] = uuid.New().String()
+		parameters["id"] = uuid.New().String()
 		tresult, err := transaction.Run(command, parameters)
 		if err != nil {
-      panic(err)
+			panic(err)
 		}
 
 		if tresult.Next() {
