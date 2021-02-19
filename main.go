@@ -6,14 +6,14 @@ import (
 	"log"
 	"net/http"
 	"repath.io/config"
-	"repath.io/data"
+	// "repath.io/data"
 )
 
 func main() {
 	configuration := config.LoadConfiguration()
 	fmt.Printf("starting %s service\n", configuration.ServiceName)
-	datastore := data.NewPersonDataStore(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password)
-	defer datastore.Close()
+	// datastore := data.NewPersonDataStore(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password)
+	//defer datastore.Close()
 
 	// initialize API and pass datastore
 	http.HandleFunc("/echo", echoHandler)
