@@ -1,0 +1,23 @@
+# GraphQL schema example
+#
+# https://gqlgen.com/getting-started/
+
+type Person @key (fields:"id") {
+  id: ID!
+  firstName: String!
+  lastName: String!
+}
+
+type Query {
+  people: [Person!]!
+}
+
+input NewPerson {
+  id: ID!
+  firstName: String!
+  lastName: String!
+}
+
+type Mutation {
+  createPerson(input: NewPerson!): Person!
+}
