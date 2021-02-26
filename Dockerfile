@@ -1,5 +1,5 @@
 # builder compiles the go executable using no C bindings to allow for scratch container
-FROM golang:1.15 as builder
+FROM golang:1.16 as builder
 COPY . .
 RUN unset GOPATH && go mod download && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /service
 
