@@ -20,11 +20,11 @@ func (gds *GraphDataStore) initialize(uri, username, password string) {
 	gds.session = session
 }
 
-func (gds *GraphDataStore) read(command string) ([]*neo4j.Record, error) {
+func (gds *GraphDataStore) read(command string, params map[string]interface{}) ([]*neo4j.Record, error) {
 
 	out, err := gds.session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		records := make([]*neo4j.Record, 0)
-		tresult, err := transaction.Run(command, nil)
+		tresult, err := transaction.Run(command, params)
 		if err != nil {
 			panic(err)
 		}

@@ -5,14 +5,25 @@ package graph
 
 import (
 	"context"
-	"fmt"
-
+	"repath.io/data"
 	"repath.io/graph/generated"
 	"repath.io/graph/model"
 )
 
 func (r *entityResolver) FindPersonByID(ctx context.Context, id string) (*model.Person, error) {
-	panic(fmt.Errorf("not implemented"))
+	people, err := data.Store().FindById(id)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]*model.Person, 0)
+	for _, v := range people {
+		out = append(out, &model.Person{
+			ID:        v.Id,
+			FirstName: v.FirstName,
+			LastName:  v.LastName,
+		})
+	}
+	return out[0], nil
 }
 
 // Entity returns generated.EntityResolver implementation.
