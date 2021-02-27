@@ -10,8 +10,8 @@ type Configuration struct {
 func LoadConfiguration() *Configuration {
 
 	result := &Neo4jConfiguration{
-		Username: os.Getenv("NEO4J_USERNAME"),
-		Password: os.Getenv("NEO4J_PASSWORD"),
+		Username: os.Getenv("NEO4J_USER"),
+		Password: os.Getenv("NEO4J_PASS"),
 		URI:      os.Getenv("NEO4J_URI"),
 	}
 

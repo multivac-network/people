@@ -13,7 +13,6 @@ type Query {
 }
 
 input NewPerson {
-  id: ID!
   firstName: String!
   lastName: String!
 }

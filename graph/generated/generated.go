@@ -253,7 +253,6 @@ type Query {
 }
 
 input NewPerson {
-  id: ID!
   firstName: String!
   lastName: String!
 }
@@ -1892,14 +1891,6 @@ func (ec *executionContext) unmarshalInputNewPerson(ctx context.Context, obj int
 
 	for k, v := range asMap {
 		switch k {
-		case "id":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "firstName":
 			var err error
 

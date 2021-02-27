@@ -7,18 +7,35 @@ import (
 	"context"
 	"fmt"
 
+	"repath.io/data"
 	"repath.io/graph/generated"
 	"repath.io/graph/model"
 )
 
 func (r *mutationResolver) CreatePerson(ctx context.Context, input model.NewPerson) (*model.Person, error) {
-	person := &model.Person{ID: input.ID, FirstName: input.FirstName, LastName: input.LastName}
-	people = append(people, person)
-	return person, nil
+	record := data.Person{FirstName: input.FirstName, LastName: input.LastName}
+	result, err := data.Store().Create(record)
+	if err != nil {
+		return nil, err
+	}
+	response := &model.Person{ID: result.Id, FirstName: result.FirstName, LastName: result.LastName}
+	return response, nil
 }
 
 func (r *queryResolver) People(ctx context.Context) ([]*model.Person, error) {
-	return people, nil
+	people, err := data.Store().FindAll()
+	if err != nil {
+		return nil, err
+	}
+	out := make([]*model.Person, 0)
+	for _, v := range people {
+		out = append(out, &model.Person{
+			ID:        v.Id,
+			FirstName: v.FirstName,
+			LastName:  v.LastName,
+		})
+	}
+	return out, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.

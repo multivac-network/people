@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"repath.io/config"
+	"repath.io/data"
 	"repath.io/graph"
 	"repath.io/graph/generated"
 
@@ -19,9 +20,8 @@ const defaultPort = "8080"
 func main() {
 	configuration := config.LoadConfiguration()
 	fmt.Printf("starting %s service\n", configuration.ServiceName)
-	// datastore := data.NewPersonDataStore(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password)
-	//defer datastore.Close()
-
+	data.Initialize(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password);
+	print(data.Store)
 	// initialize API and pass datastore
 	port := os.Getenv("PORT")
 	if port == "" {
