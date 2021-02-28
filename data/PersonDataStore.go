@@ -33,6 +33,26 @@ func (store *PersonDataStore) FindAll() ([]*Person, error){
 	return result, nil
 }
 
+func (store *PersonDataStore) FindByOrganizationId(id string) ([]*Person, error){
+	items, err := store.read("MATCH (p:Person)-[:MemberOf]->(Organization{id:$id}) RETURN p.id, p.FirstName, p.LastName",
+		map[string]interface{}{"id": id})
+	if err != nil {
+		panic(err)
+	}
+	result := make([]*Person, 0)
+	for _, v := range items {
+		id, _ := v.Get("p.id")
+		firstName, _ := v.Get("p.FirstName")
+		lastName, _ := v.Get("p.LastName")
+		result = append(result, &Person{
+			Id:id.(string),
+			FirstName:firstName.(string),
+			LastName:lastName.(string),
+		})
+	}
+	return result, nil
+}
+
 func (store *PersonDataStore) FindById(id string) ([]*Person, error){
 	items, err := store.read("MATCH (p:Person{id: $id}) RETURN p.FirstName, p.LastName, p.id",
 		map[string]interface{}{"id": id})

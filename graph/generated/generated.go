@@ -54,10 +54,16 @@ type ComplexityRoot struct {
 		CreatePerson func(childComplexity int, input model.NewPerson) int
 	}
 
+	Organization struct {
+		ID     func(childComplexity int) int
+		People func(childComplexity int) int
+	}
+
 	Person struct {
-		FirstName func(childComplexity int) int
-		ID        func(childComplexity int) int
-		LastName  func(childComplexity int) int
+		FirstName    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		LastName     func(childComplexity int) int
+		Organization func(childComplexity int) int
 	}
 
 	Query struct {
@@ -120,6 +126,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePerson(childComplexity, args["input"].(model.NewPerson)), true
 
+	case "Organization.id":
+		if e.complexity.Organization.ID == nil {
+			break
+		}
+
+		return e.complexity.Organization.ID(childComplexity), true
+
+	case "Organization.people":
+		if e.complexity.Organization.People == nil {
+			break
+		}
+
+		return e.complexity.Organization.People(childComplexity), true
+
 	case "Person.firstName":
 		if e.complexity.Person.FirstName == nil {
 			break
@@ -140,6 +160,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Person.LastName(childComplexity), true
+
+	case "Person.organization":
+		if e.complexity.Person.Organization == nil {
+			break
+		}
+
+		return e.complexity.Person.Organization(childComplexity), true
 
 	case "Query.people":
 		if e.complexity.Query.People == nil {
@@ -246,6 +273,7 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
+  organization: Organization!
 }
 
 type Query {
@@ -259,6 +287,11 @@ input NewPerson {
 
 type Mutation {
   createPerson(input: NewPerson!): Person!
+}
+
+extend type Organization{
+  id: ID! @external
+  people: [Person!]
 }`, BuiltIn: false},
 	{Name: "federation/directives.graphql", Input: `
 scalar _Any
@@ -478,6 +511,73 @@ func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field gr
 	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Organization_id(ctx context.Context, field graphql.CollectedField, obj *model.Organization) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Organization_people(ctx context.Context, field graphql.CollectedField, obj *model.Organization) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Organization",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.People, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Person)
+	fc.Result = res
+	return ec.marshalOPerson2ᚕᚖrepathᚗioᚋgraphᚋmodelᚐPersonᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Person_id(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -581,6 +681,41 @@ func (ec *executionContext) _Person_lastName(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Person_organization(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Person",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Organization, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Organization)
+	fc.Result = res
+	return ec.marshalNOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_people(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2008,6 +2143,35 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
+var organizationImplementors = []string{"Organization"}
+
+func (ec *executionContext) _Organization(ctx context.Context, sel ast.SelectionSet, obj *model.Organization) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, organizationImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Organization")
+		case "id":
+			out.Values[i] = ec._Organization_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "people":
+			out.Values[i] = ec._Organization_people(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var personImplementors = []string{"Person", "_Entity"}
 
 func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, obj *model.Person) graphql.Marshaler {
@@ -2031,6 +2195,11 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "lastName":
 			out.Values[i] = ec._Person_lastName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "organization":
+			out.Values[i] = ec._Person_organization(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2419,6 +2588,16 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 func (ec *executionContext) unmarshalNNewPerson2repathᚗioᚋgraphᚋmodelᚐNewPerson(ctx context.Context, v interface{}) (model.NewPerson, error) {
 	res, err := ec.unmarshalInputNewPerson(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *model.Organization) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Organization(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPerson2repathᚗioᚋgraphᚋmodelᚐPerson(ctx context.Context, sel ast.SelectionSet, v model.Person) graphql.Marshaler {
@@ -2845,6 +3024,46 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalOPerson2ᚕᚖrepathᚗioᚋgraphᚋmodelᚐPersonᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Person) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

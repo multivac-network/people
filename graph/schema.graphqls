@@ -6,6 +6,7 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
+  organization: Organization!
 }
 
 type Query {
@@ -19,4 +20,9 @@ input NewPerson {
 
 type Mutation {
   createPerson(input: NewPerson!): Person!
+}
+
+extend type Organization{
+  id: ID! @external
+  people: [Person!]
 }
