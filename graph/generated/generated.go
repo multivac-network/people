@@ -287,7 +287,7 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
-  organization: Organization!
+  organization: Organization
 }
 
 type Query {
@@ -303,7 +303,7 @@ type Mutation {
   createPerson(input: NewPerson!): Person!
 }
 
-extend type Organization @key (fields:id){
+extend type Organization @key (fields:"id"){
   id: ID! @external
   people: [Person!]
 }`, BuiltIn: false},
@@ -780,14 +780,11 @@ func (ec *executionContext) _Person_organization(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Organization)
 	fc.Result = res
-	return ec.marshalNOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
+	return ec.marshalOOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_people(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2293,9 +2290,6 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "organization":
 			out.Values[i] = ec._Person_organization(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -3121,6 +3115,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalOOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *model.Organization) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Organization(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPerson2ᚕᚖrepathᚗioᚋgraphᚋmodelᚐPersonᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Person) graphql.Marshaler {

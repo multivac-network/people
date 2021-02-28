@@ -5,6 +5,7 @@ package graph
 
 import (
 	"context"
+
 	"repath.io/data"
 	"repath.io/graph/generated"
 	"repath.io/graph/model"
@@ -23,7 +24,7 @@ func (r *entityResolver) FindOrganizationByID(ctx context.Context, id string) (*
 			LastName:  v.LastName,
 		})
 	}
-	return &model.Organization{ID:"id", People: out}, nil
+	return &model.Organization{ID: "id", People: out}, nil
 }
 
 func (r *entityResolver) FindPersonByID(ctx context.Context, id string) (*model.Person, error) {
