@@ -12,6 +12,8 @@ type Organization struct {
 	People []*Person `json:"people"`
 }
 
+func (Organization) IsEntity() {}
+
 type Person struct {
 	ID           string        `json:"id"`
 	FirstName    string        `json:"firstName"`

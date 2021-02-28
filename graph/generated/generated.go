@@ -47,7 +47,8 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Entity struct {
-		FindPersonByID func(childComplexity int, id string) int
+		FindOrganizationByID func(childComplexity int, id string) int
+		FindPersonByID       func(childComplexity int, id string) int
 	}
 
 	Mutation struct {
@@ -78,6 +79,7 @@ type ComplexityRoot struct {
 }
 
 type EntityResolver interface {
+	FindOrganizationByID(ctx context.Context, id string) (*model.Organization, error)
 	FindPersonByID(ctx context.Context, id string) (*model.Person, error)
 }
 type MutationResolver interface {
@@ -101,6 +103,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Entity.findOrganizationByID":
+		if e.complexity.Entity.FindOrganizationByID == nil {
+			break
+		}
+
+		args, err := ec.field_Entity_findOrganizationByID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Entity.FindOrganizationByID(childComplexity, args["id"].(string)), true
 
 	case "Entity.findPersonByID":
 		if e.complexity.Entity.FindPersonByID == nil {
@@ -289,7 +303,7 @@ type Mutation {
   createPerson(input: NewPerson!): Person!
 }
 
-extend type Organization{
+extend type Organization @key (fields:id){
   id: ID! @external
   people: [Person!]
 }`, BuiltIn: false},
@@ -305,11 +319,12 @@ directive @extends on OBJECT
 `, BuiltIn: true},
 	{Name: "federation/entity.graphql", Input: `
 # a union of all types that use the @key directive
-union _Entity = Person
+union _Entity = Organization | Person
 
 # fake type to build resolver interfaces for users to implement
 type Entity {
-		findPersonByID(id: ID!,): Person!
+		findOrganizationByID(id: ID!,): Organization!
+	findPersonByID(id: ID!,): Person!
 
 }
 
@@ -328,6 +343,21 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Entity_findOrganizationByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Entity_findPersonByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -426,6 +456,48 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 // endregion ************************** directives.gotpl **************************
 
 // region    **************************** field.gotpl *****************************
+
+func (ec *executionContext) _Entity_findOrganizationByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Entity",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Entity_findOrganizationByID_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Entity().FindOrganizationByID(rctx, args["id"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Organization)
+	fc.Result = res
+	return ec.marshalNOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx, field.Selections, res)
+}
 
 func (ec *executionContext) _Entity_findPersonByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
@@ -2056,6 +2128,13 @@ func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, 
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
+	case model.Organization:
+		return ec._Organization(ctx, sel, &obj)
+	case *model.Organization:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Organization(ctx, sel, obj)
 	case model.Person:
 		return ec._Person(ctx, sel, &obj)
 	case *model.Person:
@@ -2087,6 +2166,20 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Entity")
+		case "findOrganizationByID":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Entity_findOrganizationByID(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "findPersonByID":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -2143,7 +2236,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	return out
 }
 
-var organizationImplementors = []string{"Organization"}
+var organizationImplementors = []string{"Organization", "_Entity"}
 
 func (ec *executionContext) _Organization(ctx context.Context, sel ast.SelectionSet, obj *model.Organization) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, organizationImplementors)
@@ -2588,6 +2681,10 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 func (ec *executionContext) unmarshalNNewPerson2repathᚗioᚋgraphᚋmodelᚐNewPerson(ctx context.Context, v interface{}) (model.NewPerson, error) {
 	res, err := ec.unmarshalInputNewPerson(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNOrganization2repathᚗioᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v model.Organization) graphql.Marshaler {
+	return ec._Organization(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v *model.Organization) graphql.Marshaler {

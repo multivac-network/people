@@ -39,6 +39,20 @@ func (ec *executionContext) __resolve_entities(ctx context.Context, representati
 		}
 		switch typeName {
 
+		case "Organization":
+			id0, err := ec.unmarshalNID2string(ctx, rep["id"])
+			if err != nil {
+				return nil, errors.New(fmt.Sprintf("Field %s undefined in schema.", "id"))
+			}
+
+			entity, err := ec.resolvers.Entity().FindOrganizationByID(ctx,
+				id0)
+			if err != nil {
+				return nil, err
+			}
+
+			list = append(list, entity)
+
 		case "Person":
 			id0, err := ec.unmarshalNID2string(ctx, rep["id"])
 			if err != nil {
