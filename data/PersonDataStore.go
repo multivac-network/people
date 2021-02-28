@@ -34,6 +34,7 @@ func (store *PersonDataStore) FindAll() ([]*Person, error){
 }
 
 func (store *PersonDataStore) FindByOrganizationId(id string) ([]*Person, error){
+	println("OrganizationID: " + id)
 	items, err := store.read("MATCH (p:Person)-[:MemberOf]->(Organization{id:$id}) RETURN p.id, p.FirstName, p.LastName",
 		map[string]interface{}{"id": id})
 	if err != nil {
