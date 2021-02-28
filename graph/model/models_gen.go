@@ -15,10 +15,9 @@ type Organization struct {
 func (Organization) IsEntity() {}
 
 type Person struct {
-	ID           string        `json:"id"`
-	FirstName    string        `json:"firstName"`
-	LastName     string        `json:"lastName"`
-	Organization *Organization `json:"organization"`
+	ID        string `json:"id"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 func (Person) IsEntity() {}

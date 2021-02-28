@@ -6,7 +6,6 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
-  organization: Organization
 }
 
 type Query {
