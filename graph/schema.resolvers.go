@@ -13,13 +13,37 @@ import (
 )
 
 func (r *mutationResolver) CreatePerson(ctx context.Context, input model.NewPerson) (*model.Person, error) {
-	record := data.Person{FirstName: input.FirstName, LastName: input.LastName}
+	record := data.Person{FirstName: input.FirstName, LastName: input.LastName, Title: input.Title}
 	result, err := data.Store().Create(record)
 	if err != nil {
 		return nil, err
 	}
-	response := &model.Person{ID: result.Id, FirstName: result.FirstName, LastName: result.LastName}
+	response := &model.Person{ID: result.Id, FirstName: result.FirstName, LastName: result.LastName, Title: *result.Title}
 	return response, nil
+}
+
+func (r *mutationResolver) UpdatePerson(ctx context.Context, input model.UpdatePerson) (*model.PersonUpdate, error) {
+	record := data.Person{Id: input.ID, FirstName: input.FirstName, LastName: input.LastName, Title: input.Title}
+	out, err := data.Store().Update(record)
+	if err != nil {
+		return nil, err
+	}
+	result := &model.PersonUpdate{
+		Current: &model.Person{
+			ID:        out.Current["id"].(string),
+			FirstName: out.Current["FirstName"].(string),
+			LastName:  out.Current["LastName"].(string),
+			Title:     out.Current["Title"].(string)},
+		Previous: &model.Person{
+			ID:        out.Previous["id"].(string),
+			FirstName: out.Previous["FirstName"].(string),
+			LastName:  out.Previous["LastName"].(string),
+			Title:     out.Previous["Title"].(string)}}
+	return result, nil
+}
+
+func (r *mutationResolver) DeletePerson(ctx context.Context, input model.DeletePerson) (*model.PersonDelete, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *queryResolver) People(ctx context.Context) ([]*model.Person, error) {
@@ -33,6 +57,7 @@ func (r *queryResolver) People(ctx context.Context) ([]*model.Person, error) {
 			ID:        v.Id,
 			FirstName: v.FirstName,
 			LastName:  v.LastName,
+			Title: *v.Title,
 		})
 	}
 	return out, nil

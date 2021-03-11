@@ -53,6 +53,8 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreatePerson func(childComplexity int, input model.NewPerson) int
+		DeletePerson func(childComplexity int, input model.DeletePerson) int
+		UpdatePerson func(childComplexity int, input model.UpdatePerson) int
 	}
 
 	Organization struct {
@@ -64,6 +66,18 @@ type ComplexityRoot struct {
 		FirstName func(childComplexity int) int
 		ID        func(childComplexity int) int
 		LastName  func(childComplexity int) int
+		Title     func(childComplexity int) int
+	}
+
+	PersonDelete struct {
+		Record  func(childComplexity int) int
+		Success func(childComplexity int) int
+	}
+
+	PersonUpdate struct {
+		Current  func(childComplexity int) int
+		Previous func(childComplexity int) int
+		Success  func(childComplexity int) int
 	}
 
 	Query struct {
@@ -83,6 +97,8 @@ type EntityResolver interface {
 }
 type MutationResolver interface {
 	CreatePerson(ctx context.Context, input model.NewPerson) (*model.Person, error)
+	UpdatePerson(ctx context.Context, input model.UpdatePerson) (*model.PersonUpdate, error)
+	DeletePerson(ctx context.Context, input model.DeletePerson) (*model.PersonDelete, error)
 }
 type QueryResolver interface {
 	People(ctx context.Context) ([]*model.Person, error)
@@ -139,6 +155,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePerson(childComplexity, args["input"].(model.NewPerson)), true
 
+	case "Mutation.deletePerson":
+		if e.complexity.Mutation.DeletePerson == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePerson_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePerson(childComplexity, args["input"].(model.DeletePerson)), true
+
+	case "Mutation.updatePerson":
+		if e.complexity.Mutation.UpdatePerson == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePerson_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePerson(childComplexity, args["input"].(model.UpdatePerson)), true
+
 	case "Organization.id":
 		if e.complexity.Organization.ID == nil {
 			break
@@ -173,6 +213,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Person.LastName(childComplexity), true
+
+	case "Person.title":
+		if e.complexity.Person.Title == nil {
+			break
+		}
+
+		return e.complexity.Person.Title(childComplexity), true
+
+	case "PersonDelete.record":
+		if e.complexity.PersonDelete.Record == nil {
+			break
+		}
+
+		return e.complexity.PersonDelete.Record(childComplexity), true
+
+	case "PersonDelete.success":
+		if e.complexity.PersonDelete.Success == nil {
+			break
+		}
+
+		return e.complexity.PersonDelete.Success(childComplexity), true
+
+	case "PersonUpdate.current":
+		if e.complexity.PersonUpdate.Current == nil {
+			break
+		}
+
+		return e.complexity.PersonUpdate.Current(childComplexity), true
+
+	case "PersonUpdate.previous":
+		if e.complexity.PersonUpdate.Previous == nil {
+			break
+		}
+
+		return e.complexity.PersonUpdate.Previous(childComplexity), true
+
+	case "PersonUpdate.success":
+		if e.complexity.PersonUpdate.Success == nil {
+			break
+		}
+
+		return e.complexity.PersonUpdate.Success(childComplexity), true
 
 	case "Query.people":
 		if e.complexity.Query.People == nil {
@@ -279,6 +361,7 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
+  title: String!
 }
 
 type Query {
@@ -288,10 +371,35 @@ type Query {
 input NewPerson {
   firstName: String!
   lastName: String!
+  title: String
+}
+
+type PersonUpdate {
+  previous: Person!
+  current: Person!
+  success: Boolean!
+}
+
+type PersonDelete {
+  record: Person!
+  success: Boolean!
+}
+
+input UpdatePerson {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  title: String
+}
+
+input DeletePerson {
+  id: ID!
 }
 
 type Mutation {
   createPerson(input: NewPerson!): Person!
+  updatePerson(input: UpdatePerson!): PersonUpdate!
+  deletePerson(input: DeletePerson!): PersonDelete!
 }
 
 extend type Organization @key (fields:"id"){
@@ -372,6 +480,36 @@ func (ec *executionContext) field_Mutation_createPerson_args(ctx context.Context
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNNewPerson2repathᚗioᚋgraphᚋmodelᚐNewPerson(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deletePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.DeletePerson
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNDeletePerson2repathᚗioᚋgraphᚋmodelᚐDeletePerson(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.UpdatePerson
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNUpdatePerson2repathᚗioᚋgraphᚋmodelᚐUpdatePerson(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -574,6 +712,90 @@ func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field gr
 	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Mutation_updatePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_updatePerson_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdatePerson(rctx, args["input"].(model.UpdatePerson))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PersonUpdate)
+	fc.Result = res
+	return ec.marshalNPersonUpdate2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonUpdate(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_deletePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_deletePerson_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeletePerson(rctx, args["input"].(model.DeletePerson))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PersonDelete)
+	fc.Result = res
+	return ec.marshalNPersonDelete2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonDelete(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Organization_id(ctx context.Context, field graphql.CollectedField, obj *model.Organization) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -744,6 +966,216 @@ func (ec *executionContext) _Person_lastName(ctx context.Context, field graphql.
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Person_title(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Person",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PersonDelete_record(ctx context.Context, field graphql.CollectedField, obj *model.PersonDelete) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PersonDelete",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Record, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Person)
+	fc.Result = res
+	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PersonDelete_success(ctx context.Context, field graphql.CollectedField, obj *model.PersonDelete) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PersonDelete",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Success, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PersonUpdate_previous(ctx context.Context, field graphql.CollectedField, obj *model.PersonUpdate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PersonUpdate",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Previous, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Person)
+	fc.Result = res
+	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PersonUpdate_current(ctx context.Context, field graphql.CollectedField, obj *model.PersonUpdate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PersonUpdate",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Current, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Person)
+	fc.Result = res
+	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _PersonUpdate_success(ctx context.Context, field graphql.CollectedField, obj *model.PersonUpdate) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PersonUpdate",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Success, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_people(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2048,6 +2480,26 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputDeletePerson(ctx context.Context, obj interface{}) (model.DeletePerson, error) {
+	var it model.DeletePerson
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputNewPerson(ctx context.Context, obj interface{}) (model.NewPerson, error) {
 	var it model.NewPerson
 	var asMap = obj.(map[string]interface{})
@@ -2067,6 +2519,58 @@ func (ec *executionContext) unmarshalInputNewPerson(ctx context.Context, obj int
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastName"))
 			it.LastName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdatePerson(ctx context.Context, obj interface{}) (model.UpdatePerson, error) {
+	var it model.UpdatePerson
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "firstName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("firstName"))
+			it.FirstName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "lastName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastName"))
+			it.LastName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2181,6 +2685,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "updatePerson":
+			out.Values[i] = ec._Mutation_updatePerson(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "deletePerson":
+			out.Values[i] = ec._Mutation_deletePerson(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2244,6 +2758,80 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 			}
 		case "lastName":
 			out.Values[i] = ec._Person_lastName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._Person_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var personDeleteImplementors = []string{"PersonDelete"}
+
+func (ec *executionContext) _PersonDelete(ctx context.Context, sel ast.SelectionSet, obj *model.PersonDelete) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, personDeleteImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PersonDelete")
+		case "record":
+			out.Values[i] = ec._PersonDelete_record(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "success":
+			out.Values[i] = ec._PersonDelete_success(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var personUpdateImplementors = []string{"PersonUpdate"}
+
+func (ec *executionContext) _PersonUpdate(ctx context.Context, sel ast.SelectionSet, obj *model.PersonUpdate) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, personUpdateImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PersonUpdate")
+		case "previous":
+			out.Values[i] = ec._PersonUpdate_previous(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "current":
+			out.Values[i] = ec._PersonUpdate_current(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "success":
+			out.Values[i] = ec._PersonUpdate_success(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -2614,6 +3202,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNDeletePerson2repathᚗioᚋgraphᚋmodelᚐDeletePerson(ctx context.Context, v interface{}) (model.DeletePerson, error) {
+	res, err := ec.unmarshalInputDeletePerson(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2699,6 +3292,34 @@ func (ec *executionContext) marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPers
 	return ec._Person(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNPersonDelete2repathᚗioᚋgraphᚋmodelᚐPersonDelete(ctx context.Context, sel ast.SelectionSet, v model.PersonDelete) graphql.Marshaler {
+	return ec._PersonDelete(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPersonDelete2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonDelete(ctx context.Context, sel ast.SelectionSet, v *model.PersonDelete) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PersonDelete(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPersonUpdate2repathᚗioᚋgraphᚋmodelᚐPersonUpdate(ctx context.Context, sel ast.SelectionSet, v model.PersonUpdate) graphql.Marshaler {
+	return ec._PersonUpdate(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPersonUpdate2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonUpdate(ctx context.Context, sel ast.SelectionSet, v *model.PersonUpdate) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PersonUpdate(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -2712,6 +3333,11 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdatePerson2repathᚗioᚋgraphᚋmodelᚐUpdatePerson(ctx context.Context, v interface{}) (model.UpdatePerson, error) {
+	res, err := ec.unmarshalInputUpdatePerson(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalN_Any2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

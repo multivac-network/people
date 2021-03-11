@@ -20,38 +20,34 @@ func (gds *GraphDataStore) initialize(uri, username, password string) {
 	gds.session = session
 }
 
-func (gds *GraphDataStore) read(command string, params map[string]interface{}) ([]*neo4j.Record, error) {
-
-	out, err := gds.session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		records := make([]*neo4j.Record, 0)
+func (gds *GraphDataStore) read(command string, params map[string]interface{}) (interface{}, error) {
+	return gds.session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
 		tresult, err := transaction.Run(command, params)
-		if err != nil {
-			panic(err)
+		if tresult == nil {
+			return nil, err
 		}
-
+		result := make([]*neo4j.Record, 0)
 		for tresult.Next() {
-			records = append(records, tresult.Record())
+			result = append(result, tresult.Record())
 		}
-		return records, tresult.Err()
+		return result, err
 	})
-	if err != nil {
-		panic(err)
-	}
-	return out.([]*neo4j.Record), nil
 }
 
 func (gds *GraphDataStore) write(command string, parameters map[string]interface{}) (interface{}, error) {
 	return gds.session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		parameters["id"] = uuid.New().String()
+		if parameters["id"] == nil {
+			parameters["id"] = uuid.New().String()
+		}
 		tresult, err := transaction.Run(command, parameters)
 		if err != nil {
 			panic(err)
 		}
-
-		if tresult.Next() {
-			return tresult.Record().Values[0], nil
+		result := make([]*neo4j.Record, 0)
+		for tresult.Next() {
+			result = append(result, tresult.Record())
 		}
-		return nil, tresult.Err()
+		return result, err
 	})
 }
 

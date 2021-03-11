@@ -2,9 +2,14 @@
 
 package model
 
+type DeletePerson struct {
+	ID string `json:"id"`
+}
+
 type NewPerson struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
+	FirstName string  `json:"firstName"`
+	LastName  string  `json:"lastName"`
+	Title     *string `json:"title"`
 }
 
 type Organization struct {
@@ -18,6 +23,25 @@ type Person struct {
 	ID        string `json:"id"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+	Title     string `json:"title"`
 }
 
 func (Person) IsEntity() {}
+
+type PersonDelete struct {
+	Record  *Person `json:"record"`
+	Success bool    `json:"success"`
+}
+
+type PersonUpdate struct {
+	Previous *Person `json:"previous"`
+	Current  *Person `json:"current"`
+	Success  bool    `json:"success"`
+}
+
+type UpdatePerson struct {
+	ID        string  `json:"id"`
+	FirstName string  `json:"firstName"`
+	LastName  string  `json:"lastName"`
+	Title     *string `json:"title"`
+}

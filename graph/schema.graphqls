@@ -6,6 +6,7 @@ type Person @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
+  title: String!
 }
 
 type Query {
@@ -15,10 +16,35 @@ type Query {
 input NewPerson {
   firstName: String!
   lastName: String!
+  title: String
+}
+
+type PersonUpdate {
+  previous: Person!
+  current: Person!
+  success: Boolean!
+}
+
+type PersonDelete {
+  record: Person!
+  success: Boolean!
+}
+
+input UpdatePerson {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  title: String
+}
+
+input DeletePerson {
+  id: ID!
 }
 
 type Mutation {
   createPerson(input: NewPerson!): Person!
+  updatePerson(input: UpdatePerson!): PersonUpdate!
+  deletePerson(input: DeletePerson!): PersonDelete!
 }
 
 extend type Organization @key (fields:"id"){
