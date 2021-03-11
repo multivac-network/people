@@ -22,6 +22,7 @@ func (r *entityResolver) FindOrganizationByID(ctx context.Context, id string) (*
 			ID:        v.Id,
 			FirstName: v.FirstName,
 			LastName:  v.LastName,
+			Title: *v.Title,
 		})
 	}
 	return &model.Organization{ID: "id", People: out}, nil

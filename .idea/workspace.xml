@@ -4,14 +4,7 @@
     <bookmark url="file://$PROJECT_DIR$/data/GraphDataStore.go" description="&#9;&#9;result := make([]*neo4j.Record, 0)&#10;&#9;&#9;for tresult..." line="45" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d87bb9b6-5866-4837-a718-c15dbec38544" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/PersonDataStore.go" beforeDir="false" afterPath="$PROJECT_DIR$/data/PersonDataStore.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/generated/generated.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/generated/generated.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/model/models_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/model/models_gen.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/schema.graphqls" beforeDir="false" afterPath="$PROJECT_DIR$/graph/schema.graphqls" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graph/schema.resolvers.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/schema.resolvers.go" afterDir="false" />
-    </list>
+    <list default="true" id="d87bb9b6-5866-4837-a718-c15dbec38544" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,8 +58,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data/PersonDataStore.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="50" column="36" lean-forward="true" selection-start-line="50" selection-start-column="36" selection-end-line="50" selection-end-column="36" />
+            <state relative-caret-position="-1250">
+              <caret line="62" column="24" lean-forward="true" selection-start-line="62" selection-start-column="24" selection-end-line="62" selection-end-column="24" />
               <folding>
                 <element signature="e#14#118#0" expanded="true" />
               </folding>
@@ -123,9 +116,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="504" />
-    <option name="y" value="239" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="648" />
+    <option name="y" value="137" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
   </component>
@@ -210,15 +203,15 @@
     </configuration>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="648" y="137" width="974" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.09488273" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19474836" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32827735" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32827735" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -226,7 +219,7 @@
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="8" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Terminal" order="10" weight="0.32502708" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="10" visible="true" weight="0.32822758" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="GraphQL" order="12" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -410,8 +403,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data/PersonDataStore.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="50" column="36" lean-forward="true" selection-start-line="50" selection-start-column="36" selection-end-line="50" selection-end-column="36" />
+        <state relative-caret-position="-1250">
+          <caret line="62" column="24" lean-forward="true" selection-start-line="62" selection-start-column="24" selection-end-line="62" selection-end-column="24" />
           <folding>
             <element signature="e#14#118#0" expanded="true" />
           </folding>
