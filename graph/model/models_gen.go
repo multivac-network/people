@@ -2,14 +2,27 @@
 
 package model
 
-type DeletePerson struct {
-	ID string `json:"id"`
+type Node interface {
+	IsNode()
 }
 
-type NewPerson struct {
+type OrganizationResource interface {
+	IsOrganizationResource()
+}
+
+type AttachPersonToOrganization struct {
+	PersonID       string `json:"personId"`
+	OrganizationID string `json:"organizationId"`
+}
+
+type CreatePerson struct {
 	FirstName string  `json:"firstName"`
 	LastName  string  `json:"lastName"`
 	Title     *string `json:"title"`
+}
+
+type DeletePerson struct {
+	ID string `json:"id"`
 }
 
 type Organization struct {
@@ -26,7 +39,9 @@ type Person struct {
 	Title     string `json:"title"`
 }
 
-func (Person) IsEntity() {}
+func (Person) IsNode()                 {}
+func (Person) IsEntity()               {}
+func (Person) IsOrganizationResource() {}
 
 type PersonDelete struct {
 	Record  *Person `json:"record"`

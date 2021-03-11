@@ -2,7 +2,13 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Person @key (fields:"id") {
+# abstrations for later extension
+interface Node {
+  id: ID!
+}
+# end abstractions
+
+type Person implements Node @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
@@ -13,7 +19,7 @@ type Query {
   people: [Person!]!
 }
 
-input NewPerson {
+input CreatePerson {
   firstName: String!
   lastName: String!
   title: String
@@ -42,10 +48,18 @@ input DeletePerson {
 }
 
 type Mutation {
-  createPerson(input: NewPerson!): Person!
-  updatePerson(input: UpdatePerson!): PersonUpdate!
-  deletePerson(input: DeletePerson!): PersonDelete!
+  CreatePerson(input: CreatePerson!): Person!
+  UpdatePerson(input: UpdatePerson!): PersonUpdate!
+  DeletePerson(input: DeletePerson!): PersonDelete!
+  AttachPersonToOrganization(input:AttachPersonToOrganization): Node
 }
+
+input AttachPersonToOrganization {
+  personId: String!
+  organizationId: String!
+}
+
+extend union OrganizationResource = Person
 
 extend type Organization @key (fields:"id"){
   id: ID! @external

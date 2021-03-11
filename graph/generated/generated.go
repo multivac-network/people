@@ -52,9 +52,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CreatePerson func(childComplexity int, input model.NewPerson) int
-		DeletePerson func(childComplexity int, input model.DeletePerson) int
-		UpdatePerson func(childComplexity int, input model.UpdatePerson) int
+		AttachPersonToOrganization func(childComplexity int, input *model.AttachPersonToOrganization) int
+		CreatePerson               func(childComplexity int, input model.CreatePerson) int
+		DeletePerson               func(childComplexity int, input model.DeletePerson) int
+		UpdatePerson               func(childComplexity int, input model.UpdatePerson) int
 	}
 
 	Organization struct {
@@ -96,9 +97,10 @@ type EntityResolver interface {
 	FindPersonByID(ctx context.Context, id string) (*model.Person, error)
 }
 type MutationResolver interface {
-	CreatePerson(ctx context.Context, input model.NewPerson) (*model.Person, error)
+	CreatePerson(ctx context.Context, input model.CreatePerson) (*model.Person, error)
 	UpdatePerson(ctx context.Context, input model.UpdatePerson) (*model.PersonUpdate, error)
 	DeletePerson(ctx context.Context, input model.DeletePerson) (*model.PersonDelete, error)
+	AttachPersonToOrganization(ctx context.Context, input *model.AttachPersonToOrganization) (model.Node, error)
 }
 type QueryResolver interface {
 	People(ctx context.Context) ([]*model.Person, error)
@@ -143,36 +145,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Entity.FindPersonByID(childComplexity, args["id"].(string)), true
 
-	case "Mutation.createPerson":
-		if e.complexity.Mutation.CreatePerson == nil {
+	case "Mutation.AttachPersonToOrganization":
+		if e.complexity.Mutation.AttachPersonToOrganization == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createPerson_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_AttachPersonToOrganization_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreatePerson(childComplexity, args["input"].(model.NewPerson)), true
+		return e.complexity.Mutation.AttachPersonToOrganization(childComplexity, args["input"].(*model.AttachPersonToOrganization)), true
 
-	case "Mutation.deletePerson":
+	case "Mutation.CreatePerson":
+		if e.complexity.Mutation.CreatePerson == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_CreatePerson_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePerson(childComplexity, args["input"].(model.CreatePerson)), true
+
+	case "Mutation.DeletePerson":
 		if e.complexity.Mutation.DeletePerson == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deletePerson_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_DeletePerson_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.DeletePerson(childComplexity, args["input"].(model.DeletePerson)), true
 
-	case "Mutation.updatePerson":
+	case "Mutation.UpdatePerson":
 		if e.complexity.Mutation.UpdatePerson == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePerson_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_UpdatePerson_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -357,7 +371,13 @@ var sources = []*ast.Source{
 #
 # https://gqlgen.com/getting-started/
 
-type Person @key (fields:"id") {
+# abstrations for later extension
+interface Node {
+  id: ID!
+}
+# end abstractions
+
+type Person implements Node @key (fields:"id") {
   id: ID!
   firstName: String!
   lastName: String!
@@ -368,7 +388,7 @@ type Query {
   people: [Person!]!
 }
 
-input NewPerson {
+input CreatePerson {
   firstName: String!
   lastName: String!
   title: String
@@ -397,10 +417,18 @@ input DeletePerson {
 }
 
 type Mutation {
-  createPerson(input: NewPerson!): Person!
-  updatePerson(input: UpdatePerson!): PersonUpdate!
-  deletePerson(input: DeletePerson!): PersonDelete!
+  CreatePerson(input: CreatePerson!): Person!
+  UpdatePerson(input: UpdatePerson!): PersonUpdate!
+  DeletePerson(input: DeletePerson!): PersonDelete!
+  AttachPersonToOrganization(input:AttachPersonToOrganization): Node
 }
+
+input AttachPersonToOrganization {
+  personId: String!
+  organizationId: String!
+}
+
+extend union OrganizationResource = Person
 
 extend type Organization @key (fields:"id"){
   id: ID! @external
@@ -473,13 +501,13 @@ func (ec *executionContext) field_Entity_findPersonByID_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_createPerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_AttachPersonToOrganization_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.NewPerson
+	var arg0 *model.AttachPersonToOrganization
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNNewPerson2repathᚗioᚋgraphᚋmodelᚐNewPerson(ctx, tmp)
+		arg0, err = ec.unmarshalOAttachPersonToOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐAttachPersonToOrganization(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -488,7 +516,22 @@ func (ec *executionContext) field_Mutation_createPerson_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_deletePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_CreatePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreatePerson
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreatePerson2repathᚗioᚋgraphᚋmodelᚐCreatePerson(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_DeletePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.DeletePerson
@@ -503,7 +546,7 @@ func (ec *executionContext) field_Mutation_deletePerson_args(ctx context.Context
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_updatePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_UpdatePerson_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.UpdatePerson
@@ -670,7 +713,7 @@ func (ec *executionContext) _Entity_findPersonByID(ctx context.Context, field gr
 	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_CreatePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -687,7 +730,7 @@ func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_createPerson_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_CreatePerson_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -695,7 +738,7 @@ func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePerson(rctx, args["input"].(model.NewPerson))
+		return ec.resolvers.Mutation().CreatePerson(rctx, args["input"].(model.CreatePerson))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -712,7 +755,7 @@ func (ec *executionContext) _Mutation_createPerson(ctx context.Context, field gr
 	return ec.marshalNPerson2ᚖrepathᚗioᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_updatePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_UpdatePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -729,7 +772,7 @@ func (ec *executionContext) _Mutation_updatePerson(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_updatePerson_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_UpdatePerson_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -754,7 +797,7 @@ func (ec *executionContext) _Mutation_updatePerson(ctx context.Context, field gr
 	return ec.marshalNPersonUpdate2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonUpdate(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Mutation_deletePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Mutation_DeletePerson(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -771,7 +814,7 @@ func (ec *executionContext) _Mutation_deletePerson(ctx context.Context, field gr
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_deletePerson_args(ctx, rawArgs)
+	args, err := ec.field_Mutation_DeletePerson_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -794,6 +837,45 @@ func (ec *executionContext) _Mutation_deletePerson(ctx context.Context, field gr
 	res := resTmp.(*model.PersonDelete)
 	fc.Result = res
 	return ec.marshalNPersonDelete2ᚖrepathᚗioᚋgraphᚋmodelᚐPersonDelete(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_AttachPersonToOrganization(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_AttachPersonToOrganization_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AttachPersonToOrganization(rctx, args["input"].(*model.AttachPersonToOrganization))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(model.Node)
+	fc.Result = res
+	return ec.marshalONode2repathᚗioᚋgraphᚋmodelᚐNode(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Organization_id(ctx context.Context, field graphql.CollectedField, obj *model.Organization) (ret graphql.Marshaler) {
@@ -2480,17 +2562,25 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputDeletePerson(ctx context.Context, obj interface{}) (model.DeletePerson, error) {
-	var it model.DeletePerson
+func (ec *executionContext) unmarshalInputAttachPersonToOrganization(ctx context.Context, obj interface{}) (model.AttachPersonToOrganization, error) {
+	var it model.AttachPersonToOrganization
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
 		switch k {
-		case "id":
+		case "personId":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			it.ID, err = ec.unmarshalNID2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personId"))
+			it.PersonID, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "organizationId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("organizationId"))
+			it.OrganizationID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2500,8 +2590,8 @@ func (ec *executionContext) unmarshalInputDeletePerson(ctx context.Context, obj 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewPerson(ctx context.Context, obj interface{}) (model.NewPerson, error) {
-	var it model.NewPerson
+func (ec *executionContext) unmarshalInputCreatePerson(ctx context.Context, obj interface{}) (model.CreatePerson, error) {
+	var it model.CreatePerson
 	var asMap = obj.(map[string]interface{})
 
 	for k, v := range asMap {
@@ -2527,6 +2617,26 @@ func (ec *executionContext) unmarshalInputNewPerson(ctx context.Context, obj int
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
 			it.Title, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputDeletePerson(ctx context.Context, obj interface{}) (model.DeletePerson, error) {
+	var it model.DeletePerson
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "id":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			it.ID, err = ec.unmarshalNID2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -2583,6 +2693,38 @@ func (ec *executionContext) unmarshalInputUpdatePerson(ctx context.Context, obj 
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
+
+func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj model.Node) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.Person:
+		return ec._Person(ctx, sel, &obj)
+	case *model.Person:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Person(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
+
+func (ec *executionContext) _OrganizationResource(ctx context.Context, sel ast.SelectionSet, obj model.OrganizationResource) graphql.Marshaler {
+	switch obj := (obj).(type) {
+	case nil:
+		return graphql.Null
+	case model.Person:
+		return ec._Person(ctx, sel, &obj)
+	case *model.Person:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Person(ctx, sel, obj)
+	default:
+		panic(fmt.Errorf("unexpected type %T", obj))
+	}
+}
 
 func (ec *executionContext) __Entity(ctx context.Context, sel ast.SelectionSet, obj fedruntime.Entity) graphql.Marshaler {
 	switch obj := (obj).(type) {
@@ -2680,21 +2822,23 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createPerson":
-			out.Values[i] = ec._Mutation_createPerson(ctx, field)
+		case "CreatePerson":
+			out.Values[i] = ec._Mutation_CreatePerson(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "updatePerson":
-			out.Values[i] = ec._Mutation_updatePerson(ctx, field)
+		case "UpdatePerson":
+			out.Values[i] = ec._Mutation_UpdatePerson(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "deletePerson":
-			out.Values[i] = ec._Mutation_deletePerson(ctx, field)
+		case "DeletePerson":
+			out.Values[i] = ec._Mutation_DeletePerson(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "AttachPersonToOrganization":
+			out.Values[i] = ec._Mutation_AttachPersonToOrganization(ctx, field)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2735,7 +2879,7 @@ func (ec *executionContext) _Organization(ctx context.Context, sel ast.Selection
 	return out
 }
 
-var personImplementors = []string{"Person", "_Entity"}
+var personImplementors = []string{"Person", "Node", "_Entity", "OrganizationResource"}
 
 func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, obj *model.Person) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, personImplementors)
@@ -3202,6 +3346,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreatePerson2repathᚗioᚋgraphᚋmodelᚐCreatePerson(ctx context.Context, v interface{}) (model.CreatePerson, error) {
+	res, err := ec.unmarshalInputCreatePerson(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNDeletePerson2repathᚗioᚋgraphᚋmodelᚐDeletePerson(ctx context.Context, v interface{}) (model.DeletePerson, error) {
 	res, err := ec.unmarshalInputDeletePerson(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3220,11 +3369,6 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) unmarshalNNewPerson2repathᚗioᚋgraphᚋmodelᚐNewPerson(ctx context.Context, v interface{}) (model.NewPerson, error) {
-	res, err := ec.unmarshalInputNewPerson(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNOrganization2repathᚗioᚋgraphᚋmodelᚐOrganization(ctx context.Context, sel ast.SelectionSet, v model.Organization) graphql.Marshaler {
@@ -3676,6 +3820,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAttachPersonToOrganization2ᚖrepathᚗioᚋgraphᚋmodelᚐAttachPersonToOrganization(ctx context.Context, v interface{}) (*model.AttachPersonToOrganization, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAttachPersonToOrganization(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3698,6 +3850,13 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalONode2repathᚗioᚋgraphᚋmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v model.Node) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Node(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPerson2ᚕᚖrepathᚗioᚋgraphᚋmodelᚐPersonᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Person) graphql.Marshaler {

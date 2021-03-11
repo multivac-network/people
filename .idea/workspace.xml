@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="d87bb9b6-5866-4837-a718-c15dbec38544" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/GraphDataStore.go" beforeDir="false" afterPath="$PROJECT_DIR$/data/GraphDataStore.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/Person.go" beforeDir="false" afterPath="$PROJECT_DIR$/data/Person.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/PersonDataStore.go" beforeDir="false" afterPath="$PROJECT_DIR$/data/PersonDataStore.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph/generated/generated.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/generated/generated.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/graph/model/models_gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/graph/model/models_gen.go" afterDir="false" />
@@ -25,8 +23,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph/schema.graphqls">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="16" lean-forward="true" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+            <state relative-caret-position="67">
+              <caret line="43" column="1" lean-forward="true" selection-start-line="43" selection-start-column="1" selection-end-line="43" selection-end-column="1" />
+              <folding>
+                <element signature="e#115#128#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -34,17 +35,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph/entity.resolvers.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="14" column="42" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
+            <state relative-caret-position="136">
+              <caret line="14" column="43" lean-forward="true" selection-start-line="14" selection-start-column="43" selection-end-line="14" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graph/schema.resolvers.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="19" column="5" lean-forward="true" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
+            <state relative-caret-position="1122">
+              <caret line="66" column="19" lean-forward="true" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
               <folding>
                 <element signature="e#202#303#0" expanded="true" />
               </folding>
@@ -61,11 +62,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data/PersonDataStore.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="217">
-              <caret line="122" column="47" lean-forward="true" selection-start-line="122" selection-start-column="47" selection-end-line="122" selection-end-column="47" />
+            <state relative-caret-position="207">
+              <caret line="50" column="36" lean-forward="true" selection-start-line="50" selection-start-column="36" selection-end-line="50" selection-end-column="36" />
               <folding>
                 <element signature="e#14#118#0" expanded="true" />
               </folding>
@@ -76,8 +77,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/GraphDataStore.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="34" column="1" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
+            <state relative-caret-position="252">
+              <caret line="36" column="58" lean-forward="true" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
               <folding>
                 <element signature="e#14#95#0" expanded="true" />
               </folding>
@@ -114,17 +115,17 @@
         <option value="$PROJECT_DIR$/config/Configuration.go" />
         <option value="$PROJECT_DIR$/graph/entity.resolvers.go" />
         <option value="$PROJECT_DIR$/main.go" />
-        <option value="$PROJECT_DIR$/graph/schema.graphqls" />
         <option value="$PROJECT_DIR$/data/Person.go" />
         <option value="$PROJECT_DIR$/data/GraphDataStore.go" />
-        <option value="$PROJECT_DIR$/data/PersonDataStore.go" />
         <option value="$PROJECT_DIR$/graph/schema.resolvers.go" />
+        <option value="$PROJECT_DIR$/graph/schema.graphqls" />
+        <option value="$PROJECT_DIR$/data/PersonDataStore.go" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
+    <option name="x" value="504" />
+    <option name="y" value="239" />
     <option name="width" value="974" />
     <option name="height" value="1047" />
   </component>
@@ -217,8 +218,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32827735" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.3997833" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32827735" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997833" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -372,44 +373,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/data/GraphDataStore.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="34" column="1" selection-start-line="34" selection-start-column="1" selection-end-line="34" selection-end-column="1" />
+        <state relative-caret-position="252">
+          <caret line="36" column="58" lean-forward="true" selection-start-line="36" selection-start-column="58" selection-end-line="36" selection-end-column="58" />
           <folding>
             <element signature="e#14#95#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/graph/schema.resolvers.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1122">
+          <caret line="66" column="19" lean-forward="true" selection-start-line="66" selection-start-column="19" selection-end-line="66" selection-end-column="19" />
+          <folding>
+            <element signature="e#202#303#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/graph/schema.graphqls">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="16" lean-forward="true" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+        <state relative-caret-position="67">
+          <caret line="43" column="1" lean-forward="true" selection-start-line="43" selection-start-column="1" selection-end-line="43" selection-end-column="1" />
+          <folding>
+            <element signature="e#115#128#0" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graph/entity.resolvers.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="14" column="42" selection-start-line="14" selection-start-column="42" selection-end-line="14" selection-end-column="42" />
+        <state relative-caret-position="136">
+          <caret line="14" column="43" lean-forward="true" selection-start-line="14" selection-start-column="43" selection-end-line="14" selection-end-column="43" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/data/PersonDataStore.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="122" column="47" lean-forward="true" selection-start-line="122" selection-start-column="47" selection-end-line="122" selection-end-column="47" />
+        <state relative-caret-position="207">
+          <caret line="50" column="36" lean-forward="true" selection-start-line="50" selection-start-column="36" selection-end-line="50" selection-end-column="36" />
           <folding>
             <element signature="e#14#118#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graph/schema.resolvers.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="19" column="5" lean-forward="true" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
-          <folding>
-            <element signature="e#202#303#0" expanded="true" />
           </folding>
         </state>
       </provider>
