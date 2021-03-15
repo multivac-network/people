@@ -3,8 +3,9 @@ package config
 import "os"
 
 type Configuration struct {
-	ServiceName string
-	Neo4j       *Neo4jConfiguration
+	ServiceName     string
+	Neo4j           *Neo4jConfiguration
+	DevelopmentMode string
 }
 
 func LoadConfiguration() *Configuration {
@@ -15,5 +16,9 @@ func LoadConfiguration() *Configuration {
 		URI:      os.Getenv("NEO4J_URI"),
 	}
 
-	return &Configuration{Neo4j: result, ServiceName: os.Getenv("SERVICE_NAME")}
+	return &Configuration{
+		Neo4j: result,
+		DevelopmentMode: os.Getenv("DEVELOPMENT_MODE"),
+		ServiceName: os.Getenv("SERVICE_NAME"),
+	}
 }

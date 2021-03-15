@@ -54,6 +54,13 @@ type PersonUpdate struct {
 	Success  bool    `json:"success"`
 }
 
+type Team struct {
+	ID     string    `json:"id"`
+	People []*Person `json:"people"`
+}
+
+func (Team) IsEntity() {}
+
 type UpdatePerson struct {
 	ID        string  `json:"id"`
 	FirstName string  `json:"firstName"`

@@ -161,3 +161,28 @@ func (store *PersonDataStore) Update(person Person) (*PersonUpdate, error) {
 
 	return &PersonUpdate{Current: current.(dbtype.Node).Props, Previous: previous.(dbtype.Node).Props}, err
 }
+
+func (store *PersonDataStore) FindByTeamId(id string) ([]*Person, error) {
+	items, err := store.Read("MATCH (p:Person)-[:RESOURCE_OF]->(Team{id:$id}) RETURN p.id, p.FirstName, p.LastName, p.Title",
+		map[string]interface{}{"id": id})
+	if err != nil {
+		panic(err)
+	}
+	result := make([]*Person, 0)
+	records :=items.([]*db.Record)
+	for _, v := range records {
+		id, _ := v.Get("p.id")
+		firstName, _ := v.Get("p.FirstName")
+		lastName, _ := v.Get("p.LastName")
+		var title string
+		if t, _ := v.Get("p.Title"); t != nil{ title = t.(string) }
+		result = append(result, &Person{
+			Id:id.(string),
+			FirstName:firstName.(string),
+			LastName:lastName.(string),
+			Title: &title,
+
+		})
+	}
+	return result, nil
+}

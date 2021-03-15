@@ -65,3 +65,8 @@ extend type Organization @key (fields:"id"){
   id: ID! @external
   people: [Person!]
 }
+
+extend type Team @key (fields:"id"){
+  id: ID! @external
+  people: [Person!]
+}

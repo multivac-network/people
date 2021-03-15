@@ -17,21 +17,22 @@ import (
 	// "repath.io/data"
 )
 
-const defaultPort = "8084"
+const defaultPort = "8081"
 
 func main() {
 	configuration := config.LoadConfiguration()
 	fmt.Printf("starting %s service\n", configuration.ServiceName)
 	data.Initialize(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password);
 
-	// initialize API and pass datastore
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
 	router := chi.NewRouter()
-	router.Use(auth.AuthorizationProvider())
+	if configuration.DevelopmentMode != "True" {
+		router.Use(auth.AuthorizationProvider())
+	}
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 	router.Handle("/", playground.Handler("GraphQL playground", "query"))
 	router.Handle("/query", srv)
