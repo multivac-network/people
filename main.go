@@ -15,13 +15,13 @@ import (
 	// "repath.io/data"
 )
 
-const defaultPort = "8080"
+const defaultPort = "8084"
 
 func main() {
 	configuration := config.LoadConfiguration()
 	fmt.Printf("starting %s service\n", configuration.ServiceName)
 	data.Initialize(configuration.Neo4j.URI, configuration.Neo4j.Username, configuration.Neo4j.Password);
-	print(data.Store)
+
 	// initialize API and pass datastore
 	port := os.Getenv("PORT")
 	if port == "" {

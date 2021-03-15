@@ -3,10 +3,11 @@ package data
 import (
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/db"
 	"github.com/neo4j/neo4j-go-driver/v4/neo4j/dbtype"
+	"github.com/repath-io/data"
 )
 
 type PersonDataStore struct {
-	GraphDataStore
+	data.GraphDataStore
 }
 
 type PersonUpdate struct {
@@ -17,7 +18,7 @@ type PersonUpdate struct {
 var s = &PersonDataStore{}
 
 func Initialize(uri, username, password string) {
-	s.initialize(uri, username, password)
+	s.Initialize(uri, username, password)
 }
 
 func Store() *PersonDataStore{
@@ -25,7 +26,7 @@ func Store() *PersonDataStore{
 }
 
 func (store *PersonDataStore) FindAll() ([]*Person, error){
-	items, err := store.read("MATCH (p:Person) RETURN p.FirstName, p.LastName, p.id, p.Title", nil)
+	items, err := store.Read("MATCH (p:Person) RETURN p.FirstName, p.LastName, p.id, p.Title", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -49,7 +50,7 @@ func (store *PersonDataStore) FindAll() ([]*Person, error){
 
 func (store *PersonDataStore) FindByOrganizationId(id string) ([]*Person, error){
 	println("OrganizationID: " + id)
-	items, err := store.read("MATCH (p:Person)-[:RESOURCE_OF]->(Organization{id:$id}) RETURN p.id, p.FirstName, p.LastName, p.Title",
+	items, err := store.Read("MATCH (p:Person)-[:RESOURCE_OF]->(Organization{id:$id}) RETURN p.id, p.FirstName, p.LastName, p.Title",
 		map[string]interface{}{"id": id})
 	if err != nil {
 		panic(err)
@@ -74,7 +75,7 @@ func (store *PersonDataStore) FindByOrganizationId(id string) ([]*Person, error)
 }
 
 func (store *PersonDataStore) FindById(id string) ([]*Person, error){
-	items, err := store.read("MATCH (p:Person{id: $id}) RETURN p.FirstName, p.LastName, p.id, p.Title",
+	items, err := store.Read("MATCH (p:Person{id: $id}) RETURN p.FirstName, p.LastName, p.id, p.Title",
 		map[string]interface{}{"id": id})
 	if err != nil {
 		panic(err)
@@ -103,7 +104,7 @@ func (store *PersonDataStore) Create(person Person) (Person, error) {
 	if person.Title != nil {
 		params["Title"] = *person.Title
 	}
-	p, err := store.write(
+	p, err := store.Write(
 		"CREATE (p:Person) " +
 			"SET p.id = $id, " +
 			"p.name = $name, " +
@@ -143,7 +144,7 @@ func (store *PersonDataStore) Update(person Person) (*PersonUpdate, error) {
 	if person.Title != nil {
 		params["Title"] = *person.Title
 	}
-	out, err := store.write(
+	out, err := store.Write(
 		"MATCH (previous:Person{id: $id}) " +
 			"MERGE (current:Person{id: $id}) " +
 			"ON MATCH " +
